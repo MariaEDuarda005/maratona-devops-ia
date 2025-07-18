@@ -3,7 +3,6 @@ kind: Deployment
 metadata:
   name: web
 spec:
-  replicas: 2
   selector:
     matchLabels:
       app: web
@@ -14,19 +13,6 @@ spec:
     spec:
       containers:
       - name: web
-        image: fabricioveronez/web-color:blue
+        image: mariateste/conversao-temperatura-maratona:v1
         ports:
-        - containerPort: 80
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: web
-spec:
-  selector:
-    app: web
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80
-  type: LoadBalancer
+        - containerPort: 8080
