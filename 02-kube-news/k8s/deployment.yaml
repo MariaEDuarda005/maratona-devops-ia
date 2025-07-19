@@ -23,7 +23,7 @@ spec:
         - name: POSTGRES_USER
           value: "kubedevnews"
         - name: POSTGRES_PASSWORD
-          value: "Pg#123"
+          value: "Pg@123"
 ---
 apiVersion: v1
 kind: Service
@@ -53,7 +53,7 @@ spec:
     spec:
       containers:
       - name: kube-news-app
-        image: fabriciosveronez/kube-news-maratona:v1
+        image: mariateste/kube-news-app:v1
         ports:
         - containerPort: 8080
         env:
@@ -68,7 +68,7 @@ spec:
         - name: DB_USERNAME
           value: "kubedevnews"
         - name: DB_PASSWORD
-          value: "Pg#123"
+          value: "Pg@123"
         - name: DB_SSL_REQUIRE
           value: "false"
 ---
