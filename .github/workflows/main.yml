@@ -1,0 +1,48 @@
+name: CI-CD
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+    CI:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+            
+            - name: Login to Docker Hub
+              uses: docker/login-action@v3
+              with:
+                username: ${{ secrets.DOCKERHUB_USERNAME }}
+                password: ${{ secrets.DOCKERHUB_TOKEN }}
+                
+            - name: Build and push Docker image
+              uses: docker/build-push-action@v6
+              with:
+                # docker build -t .
+                context: 02-kube-news/src
+                file: 02-kube-news/src/Dockerfile
+                push: true
+                tags: | 
+                  mariateste/kube-news-app:v${{ github.run_number }}
+                  mariateste/kube-news-app:latest
+
+    CD:
+        needs: [CI]
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Set up Kubeconfig
+              uses: azure/k8s-set-context@v4
+              with:
+                kubeconfig: ${{ secrets.KUBE_CONFIG }}
+
+            - name: Deploy to kubernetes
+              uses: Azure/k8s-deploy@v5
+              with:
+                manifests: 02-kube-news/aks/deployment.yaml
+                images: mariateste/kube-news-app:v${{ github.run_number }}
